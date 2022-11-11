@@ -112,7 +112,7 @@ class NeuralCellularAutomata(nn.Module):
 
         return state_out
 
-    def train_ca(self, n_iter, n_steps=(64, 96), batch_size=8):
+    def train_ca(self, n_iter, n_steps=(64, 96), batch_size=8, path='model.pt'):
 
         best_loss = torch.inf
         losses = []
@@ -147,7 +147,7 @@ class NeuralCellularAutomata(nn.Module):
                 best_loss = loss
                 best_img = self.get_img_state(state)
 
-                torch.save(self.state_dict(), 'best_model3.pt')
+                torch.save(self.state_dict(), path)
 
 
         return best_img, losses
