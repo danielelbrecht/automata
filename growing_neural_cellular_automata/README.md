@@ -1,3 +1,5 @@
+![NCA DEMO](demos/lizard_growing.gif)
+
 # About
 I discovered the idea of growing neural cellular automata
 here : https://distill.pub/2020/growing-ca/
