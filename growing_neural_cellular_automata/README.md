@@ -11,7 +11,7 @@ environment, and growing a whole image from one cell through a shared local rule
 bottleneck that turns a single image into an interesting training objective. The experiments below push further
 on those biological parallels.
 
-## Genes guide development, they are not blueprints
+## Examining cell internal states
 In biology, genes don't describe the finished body; they guide a developmental process, which is why the same
 genes can build symmetric structures such as paired limbs. Do cells in the lizard's symmetric parts end up with
 similar internal states? `explore_state.py` (see [Exploring cell state](#exploring-cell-state)) lets you click
@@ -20,8 +20,10 @@ similar states.
 
 ![Internal state explorer](demos/nca_internal_state.png)
 
+Here, the heatmap on the right is showing the similarity of the internal states of each cell to the circled cell (bottom of left arm).  The most similar internal states exist in the local region, as well as the bottom of the left leg.  Interesting to see
+
 ## Same genes, different structures (MNIST)
-Cells with identical genes can differentiate into very different structures. Can one NCA grow into different
+Cells with identical genes (here,  NCA model weights) can differentiate into very different structures. Can one NCA grow into different
 digits depending on circumstance? Each training episode has two stages (see [MNIST](#mnist)):
 1. fill in a partly masked MNIST digit;
 2. take a single cell from that result, use it to seed an empty canvas, and regrow the original digit.
