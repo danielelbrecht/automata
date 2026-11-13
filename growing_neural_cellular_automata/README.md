@@ -1,17 +1,42 @@
 ![NCA DEMO](demos/lizard_growing.gif)
 
 # About
-I discovered the idea of growing neural cellular automata
-here : https://distill.pub/2020/growing-ca/
+A reimplementation of [Growing Neural Cellular Automata](https://distill.pub/2020/growing-ca/) (Distill, 2020),
+plus a couple of extensions. A cellular automaton is a grid of cells that each update from their local
+neighbourhood with a simple rule; in a neural cellular automaton (NCA) that rule is a small neural network, and the
+whole process is differentiable, so the rule can be trained to grow a target pattern from a single seed cell.
 
-Cellular automata theory is a rich field which has been around for some 
-time.  The basic idea is that given cells with some initial state and a 
-simple update rule can yield interesting and complex behavior.
+What makes NCAs fun is how closely they echo biology: a convolution is a grid of cells sensing their local
+environment, and growing a whole image from one cell through a shared local rule is a strong information
+bottleneck that turns a single image into an interesting training objective. The experiments below push further
+on those biological parallels.
 
-Neural cellular automata (abbreviated NCA) extends this by having a neural network
-function as the update rule, and creating a differentiable environment such that
-the NCA is able to learn an update rule that can achieve a desired result.
+## Genes guide development, they are not blueprints
+In biology, genes don't describe the finished body; they guide a developmental process, which is why the same
+genes can build symmetric structures such as paired limbs. Do cells in the lizard's symmetric parts end up with
+similar internal states? `explore_state.py` (see [Exploring cell state](#exploring-cell-state)) lets you click
+a cell and colours every other cell by how similar its hidden state is. To a limited degree, the limbs do share
+similar states.
 
+![Internal state explorer](demos/nca_internal_state.png)
+
+## Same genes, different structures (MNIST)
+Cells with identical genes can differentiate into very different structures. Can one NCA grow into different
+digits depending on circumstance? Each training episode has two stages (see [MNIST](#mnist)):
+1. fill in a partly masked MNIST digit;
+2. take a single cell from that result, use it to seed an empty canvas, and regrow the original digit.
+
+No cell is ever told which digit it belongs to, so the cells have to infer the digit in stage 1 and carry enough
+of that identity in their hidden state for a single cell to rebuild the digit in stage 2. In the GIFs the rows are
+the target, the digit grown from its masked version, and the digit regrown from a single cell.
+
+![MNIST regrowth](demos/mnist_1.gif)
+
+Example one.  The NCA does a good job of reconstructing the masked digits in the second row.  It is cool to see that for the digit "1", the NCA seems to be 'sensing' the boundary of the image to detect its global position.
+
+![MNIST regrowth](demos/mnist_2.gif)
+
+Example 2.  Regrowing the "2" from scatch is tough (3rd row, middle col) and the "3" cell bottom right, mistakenly developed into a "1".  Interesting failure modes.
 
 # Code
 - `nca_model.py` - `NeuralCellularAutomata`: the cell state (RGB + alpha + hidden channels),
@@ -30,7 +55,7 @@ python main.py -t --img path-to-img --model path-to-model
 
 To run a trained model:
 ```
-python main.py -e --model path-to-model
+python main.py -e --model path-to-model --img path-to-img
 ```
 Run the trained model provided:
 ```
@@ -90,8 +115,8 @@ the cells' hidden state (not just the rule to read it). Second-stage samples cos
 
 The mix is set by `mnist.p_masked` and `mnist.p_single_cell` (25% each by default). MNIST training uses
 `mnist.lr_decay_at` (default 12000, after the curriculum) instead of `train.lr_decay_at`. Shared optimisation settings
-(`train.*`) and model settings (`model.*`) apply as for the single image. Evaluation GIFs use MNIST test digits;
-their rows are target / grown from the masked digit / regrown from a single cell of that result.
+(`train.*`) and model settings (`model.*`) apply as for the single image. Evaluation GIFs use the training digits by default
+(`mnist.eval_on_train`); their rows are target / grown from the masked digit / regrown from a single cell of that result.
 ```
 python mnist_main.py -t --model saved_models/mnist.pt --set train.n_iter=20000 --set model.internal_dim=30
 python mnist_main.py -e --model saved_models/mnist.pt --set mnist.eval_mask=0.8
