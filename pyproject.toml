@@ -1,0 +1,23 @@
+[project]
+name = "automata"
+version = "0.1.0"
+description = "Cellular automata experiments, incl. particle-based growing neural cellular automata"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "torch>=2.6",
+    "torchvision",
+    "numpy",
+    "pillow",
+    "matplotlib",
+]
+
+[dependency-groups]
+dev = ["pytest"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
